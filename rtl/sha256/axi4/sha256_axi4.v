@@ -114,23 +114,23 @@
   // Internal constant and parameter definitions.
   //----------------------------------------------------------------
   localparam ADDR_NAME0       = 8'h00;
-  localparam ADDR_NAME1       = 8'h01;
-  localparam ADDR_VERSION     = 8'h02;
+  localparam ADDR_NAME1       = 8'h04;
+  localparam ADDR_VERSION     = 8'h08;
 
-  localparam ADDR_CTRL        = 8'h08;
+  localparam ADDR_CTRL        = 8'h20;
   localparam CTRL_INIT_BIT    = 0;
   localparam CTRL_NEXT_BIT    = 1;
   localparam CTRL_MODE_BIT    = 2;
 
-  localparam ADDR_STATUS      = 8'h09;
+  localparam ADDR_STATUS      = 8'h24;
   localparam STATUS_READY_BIT = 0;
   localparam STATUS_VALID_BIT = 1;
 
-  localparam ADDR_BLOCK0    = 8'h10;
-  localparam ADDR_BLOCK15   = 8'h1f;
+  localparam ADDR_BLOCK0    = 8'h40;
+  localparam ADDR_BLOCK15   = 8'h7c;
 
-  localparam ADDR_DIGEST0   = 8'h20;
-  localparam ADDR_DIGEST7   = 8'h27;
+  localparam ADDR_DIGEST0   = 8'h80;
+  localparam ADDR_DIGEST7   = 8'h9c;
 
   localparam CORE_NAME0     = 32'h73686132; // "sha2"
   localparam CORE_NAME1     = 32'h2d323536; // "-256"
@@ -248,7 +248,7 @@
           if (block_we)
           begin
             hash_complete_reg                <= 1'h0;
-            block_reg[s00_axi_awaddr[3 : 0]] <= s00_axi_wdata;
+            block_reg[(s00_axi_awaddr[7:0] - 8'h40) >> 2] <= s00_axi_wdata;
           end
         end
     end // reg_update
@@ -289,12 +289,12 @@
           else
             begin
               if ((s00_axi_araddr >= ADDR_BLOCK0) && (s00_axi_araddr <= ADDR_BLOCK15))
-                tmp_read_data = block_reg[s00_axi_awaddr[3 : 0]];
+                tmp_read_data = block_reg[(s00_axi_araddr[7:0] - 8'h40) >> 2];
 
 
               if ((s00_axi_araddr >= ADDR_DIGEST0) && (s00_axi_araddr <= ADDR_DIGEST7))
                begin
-                tmp_read_data = digest_reg[(7 - (s00_axi_araddr - ADDR_DIGEST0)) * 32 +: 32] ;
+                tmp_read_data = digest_reg[(7 - ((s00_axi_araddr - ADDR_DIGEST0) >> 2)) * 32 +: 32];
                end
 
               case (s00_axi_araddr)
