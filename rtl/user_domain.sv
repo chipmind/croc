@@ -24,7 +24,12 @@ module user_domain import user_pkg::*; import croc_pkg::*; #(
   output logic [NumExternalIrqs-1:0] interrupts_o    // interrupts to core
 );
 
-  assign interrupts_o = '0;
+  // SHA-256 hash_complete interrupt on interrupts_o[0]
+  logic hash_complete;
+  always_comb begin
+    interrupts_o    = '0;
+    interrupts_o[0] = hash_complete;
+  end
 
 
   //////////////////////
@@ -51,7 +56,7 @@ module user_domain import user_pkg::*; import croc_pkg::*; #(
   sbr_obi_req_t user_error_obi_req;
   sbr_obi_rsp_t user_error_obi_rsp;
 
-  // OBI bus to your design
+  // OBI bus to SHA-256
   sbr_obi_req_t user_design_obi_req;
   sbr_obi_rsp_t user_design_obi_rsp;
 
@@ -107,21 +112,15 @@ module user_domain import user_pkg::*; import croc_pkg::*; #(
 // User Subordinates
 //-------------------------------------------------------------------------------------------------
 
-  ///////////////////////////////////
-  // Replace this with your Design //
-  ///////////////////////////////////
-  obi_err_sbr #(
-    .ObiCfg      ( SbrObiCfg     ),
-    .obi_req_t   ( sbr_obi_req_t ),
-    .obi_rsp_t   ( sbr_obi_rsp_t ),
-    .NumMaxTrans ( 1             ),
-    .RspData     ( 32'hBADCAB1E  )
-  ) i_your_design_goes_here (
+  ///////////////////
+  // SHA-256 Core  //
+  ///////////////////
+  sha256_obi_wrapper i_sha256_obi_wrapper (
     .clk_i,
     .rst_ni,
-    .testmode_i ( testmode_i          ),
-    .obi_req_i  ( user_design_obi_req ),
-    .obi_rsp_o  ( user_design_obi_rsp )
+    .obi_req_i       ( user_design_obi_req ),
+    .obi_rsp_o       ( user_design_obi_rsp ),
+    .hash_complete_o ( hash_complete       )
   );
 
   // Error Subordinate
