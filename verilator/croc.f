@@ -176,6 +176,13 @@
 ../rtl/clint/clint.sv
 ../rtl/obi_timer/obi_timer.sv
 ../rtl/croc_domain.sv
+../rtl/obi/obi_to_axi4lite.sv
+../rtl/sha256/rtl/sha256_k_constants.v
+../rtl/sha256/rtl/sha256_w_mem.v
+../rtl/sha256/rtl/sha256_core.v
+../rtl/sha256/axi4/sha256_axi4_slave.v
+../rtl/sha256/axi4/sha256_axi4.v
+../rtl/user_domain/sha256_obi_wrapper.sv
 ../rtl/user_domain.sv
 ../rtl/croc_soc.sv
 ../rtl/croc_chip.sv

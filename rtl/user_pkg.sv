@@ -33,7 +33,7 @@ package user_pkg;
   localparam croc_pkg::addr_map_rule_t [0:0] UserAddrMap = '{
     '{
       idx:        UserDesign,
-      start_addr: croc_pkg::UserBaseAddr,
+      start_addr: croc_pkg::UserBaseAddr + 32'h0000_1000,
       end_addr:   croc_pkg::UserBaseAddr + 32'h1000_0000
     }
   };
